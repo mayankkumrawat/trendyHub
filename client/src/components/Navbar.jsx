@@ -1,10 +1,12 @@
 import { Badge } from '@material-ui/core'
-import { Search, ShoppingCartOutlined } from '@material-ui/icons'
+import { ShoppingCartOutlined } from '@material-ui/icons'
 import React from 'react'
 import styled from 'styled-components'
 import { mobile } from '../responsive'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import { logout } from '../redux/userRedux'
+import { removeProduct } from '../redux/cartRedux'
 
 const Container = styled.div`
   height: 60px;
@@ -31,18 +33,18 @@ const Language = styled.span`
   ${mobile({ display: 'none' })}
 `
 
-const SearchContainer = styled.div`
-  border: 0.5px solid lightgray;
-  display: flex;
-  align-items: center;
-  margin-left: 25px;
-  padding: 5px;
-`
+// const SearchContainer = styled.div`
+//   border: 0.5px solid lightgray;
+//   display: flex;
+//   align-items: center;
+//   margin-left: 25px;
+//   padding: 5px;
+// `
 
-const Input = styled.input`
-  border: none;
-  ${mobile({ width: '50px' })}
-`
+// const Input = styled.input`
+//   border: none;
+//   ${mobile({ width: '50px' })}
+// `
 
 const Center = styled.div`
   flex: 1;
@@ -58,7 +60,7 @@ const Right = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  ${mobile({ flex: 2, justifyContent: 'center' })}
+  ${mobile({ flex: 1.3, justifyContent: 'center' })}
 `
 
 const MenuItem = styled.div`
@@ -71,26 +73,44 @@ const MenuItem = styled.div`
 
 const Navbar = () => {
   const quantity = useSelector((state) => state.cart.quantity)
+  const user = useSelector((state) => state.user.currentUser)
+  const dispatch = useDispatch()
+  const handleClick = (e) => {
+    dispatch(logout())
+    dispatch(removeProduct())
+  }
   return (
     <Container>
       <Wrapper>
         <Left>
           <Language>EN</Language>
-          <SearchContainer>
+          {/* <SearchContainer>
             <Input placeholder="Search" />
             <Search style={{ color: 'gray', fontSize: 16 }} />
-          </SearchContainer>
+          </SearchContainer> */}
         </Left>
         <Center>
           <Logo>TrendyHub</Logo>
         </Center>
         <Right>
-          <Link style={{ textDecoration: 'none' }} to="/register">
-            <MenuItem>REGISTER</MenuItem>
-          </Link>
-          <Link style={{ textDecoration: 'none' }} to="/login">
-            <MenuItem>SIGN IN</MenuItem>
-          </Link>
+          {user ? (
+            <Link
+              style={{ textDecoration: 'none' }}
+              onClick={handleClick}
+              to="/"
+            >
+              LOG OUT
+            </Link>
+          ) : (
+            <>
+              <Link style={{ textDecoration: 'none' }} to="/register">
+                <MenuItem>REGISTER</MenuItem>
+              </Link>
+              <Link style={{ textDecoration: 'none' }} to="/login">
+                <MenuItem>SIGN IN</MenuItem>
+              </Link>
+            </>
+          )}
           <Link to="/cart">
             <MenuItem>
               <Badge badgeContent={quantity} color="primary">

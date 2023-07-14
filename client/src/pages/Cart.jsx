@@ -161,6 +161,7 @@ const Button = styled.button`
 
 const Cart = () => {
   const cart = useSelector((state) => state.cart)
+  const user = useSelector((state) => state.user.currentUser)
   const [stripeToken, setStripeToken] = useState(null)
   const history = useHistory()
 
@@ -173,7 +174,7 @@ const Cart = () => {
       try {
         const res = await userRequest.post('/checkout/payment', {
           tokenId: stripeToken.id,
-          amount: 500,
+          amount: cart.total,
         })
         history.push('/success', {
           stripeData: res.data,
@@ -186,8 +187,8 @@ const Cart = () => {
         })
       }
     }
-    stripeToken && makeRequest()
-  }, [stripeToken, cart, history])
+    user && stripeToken && makeRequest()
+  }, [user, stripeToken, cart, history])
   return (
     <Container>
       <Navbar />
@@ -205,7 +206,7 @@ const Cart = () => {
         <Bottom>
           <Info>
             {cart.products.map((product) => (
-              <Product>
+              <Product key={product._id}>
                 <ProductDetail>
                   <Image src={product.img} />
                   <Details>
@@ -254,8 +255,8 @@ const Cart = () => {
               <SummaryItemPrice>$ {cart.total}</SummaryItemPrice>
             </SummaryItem>
             <StripeCheckout
-              name="Lama Shop"
-              image="https://avatars.githubusercontent.com/u/1486366?v=4"
+              name="TrendyHub"
+              image="https://cdna.artstation.com/p/assets/images/images/059/871/002/large/vishal-gala-trendy-hub-01.jpg?1677320898"
               billingAddress
               shippingAddress
               description={`Your total is $${cart.total}`}

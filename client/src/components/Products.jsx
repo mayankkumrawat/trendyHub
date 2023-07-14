@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Product from './Product'
-import axios from 'axios'
+import { publicRequest } from '../requestMethods'
 
 const Container = styled.div`
   padding: 20px;
@@ -17,10 +17,8 @@ const Products = ({ cat, filters, sort }) => {
   useEffect(() => {
     const getProducts = async () => {
       try {
-        const res = await axios.get(
-          cat
-            ? `https://e-commerce-api-fsq7.onrender.com/api/products?category=${cat}`
-            : 'https://e-commerce-api-fsq7.onrender.com/api/products'
+        const res = await publicRequest.get(
+          cat ? `/products?category=${cat}` : '/products'
         )
         setProducts(res.data)
       } catch (err) {}
@@ -32,8 +30,9 @@ const Products = ({ cat, filters, sort }) => {
     cat &&
       setFilteredProducts(
         products.filter((item) =>
-          Object.entries(filters).every(([key, value]) =>
-            item[key].includes(value)
+          Object.entries(filters).every(
+            ([key, value]) =>
+              item[key].includes(value) || value === 'Size' || value === 'Color'
           )
         )
       )

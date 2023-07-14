@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { mobile } from '../responsive'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { register } from '../redux/apiCalls'
 
 const Container = styled.div`
   width: 100vw;
@@ -55,23 +56,29 @@ const Button = styled.button`
   color: white;
   cursor: pointer;
 `
+const Error = styled.span`
+  color: red;
+`
 
 const Register = () => {
   const [name, setName] = useState('')
   const [lastName, setLastName] = useState('')
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
-
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-
-  const dispatch = useDispatch()
   const { isFetching, error } = useSelector((state) => state.user)
-
+  const dispatch = useDispatch()
   const handleClick = (e) => {
     e.preventDefault()
-    // if(password === )
-    // login(dispatch, { username, password })
+    register(dispatch, {
+      name,
+      username,
+      password,
+      confirmPassword,
+      lastName,
+      email,
+    })
   }
   return (
     <Container>
@@ -103,7 +110,10 @@ const Register = () => {
             By creating an account, I consent to the processing of my personal
             data in accordance with the <b>PRIVACY POLICY</b>
           </Agreement>
-          <Button onClick={handleClick}>CREATE</Button>
+          <Button disabled={isFetching} onClick={handleClick}>
+            CREATE
+          </Button>
+          {error && <Error>Something went wrong...</Error>}
         </Form>
       </Wrapper>
     </Container>
